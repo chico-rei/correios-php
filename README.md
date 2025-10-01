@@ -1,7 +1,7 @@
 # Correios Web Service client wrapper for PHP
 
-[![Build Status](https://travis-ci.org/chico-rei/correios-php.svg?branch=master)](https://travis-ci.org/chico-rei/correios-php) 
-[![Coverage Status](https://coveralls.io/repos/github/chico-rei/correios-php/badge.svg?branch=master)](https://coveralls.io/github/chico-rei/correios-php?branch=master)
+[![PHP CI](https://github.com/chico-rei/correios-php/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/chico-rei/correios-php/actions/workflows/tests.yml)
+[![Coverage Status](https://coveralls.io/repos/github/chico-rei/correios-php/badge.svg?branch=main)](https://coveralls.io/github/chico-rei/correios-php?branch=main)
 [![Latest Stable Version](https://poser.pugx.org/chico-rei/correios-php/v/stable)](https://packagist.org/packages/chico-rei/correios-php)
 [![License](https://poser.pugx.org/chico-rei/correios-php/license)](https://packagist.org/packages/chico-rei/correios-php)
 
