@@ -27,7 +27,7 @@ class Client
      */
     const API_SANDBOX_URL = 'https://apihom.correios.com.br';
 
-    private Account $authorization;
+    private Account $account;
 
     private CacheInterface $cacheDriver;
 
@@ -38,22 +38,22 @@ class Client
     private ?string $tokenCacheKey = null;
 
     /**
-     * @param Account $authorization
+     * @param Account $account
      * @param array $guzzleOptions
      * @param CacheInterface $cacheDriver
      */
-    public function __construct(Account $authorization, CacheInterface $cacheDriver, array $guzzleOptions)
+    public function __construct(Account $account, CacheInterface $cacheDriver, array $guzzleOptions)
     {
-        $this->authorization = $authorization;
+        $this->account = $account;
         $this->cacheDriver = $cacheDriver;
         $this->tokenCacheKey = 'cr_correios_tk_'.implode('_', [
-                $this->authorization->getUsername() ?? '',
-                $this->authorization->getContract() ?? '',
-                $this->authorization->getPostcard() ?? '',
+                $this->account->getUsername() ?? '',
+                $this->account->getContract() ?? '',
+                $this->account->getPostcard() ?? '',
             ]);
 
         $this->guzzle = new Guzzle(array_merge($guzzleOptions, [
-            'base_uri' => $this->authorization->isSandbox() ? self::API_SANDBOX_URL : self::API_URL,
+            'base_uri' => $this->account->isSandbox() ? self::API_SANDBOX_URL : self::API_URL,
             'http_errors' => true,
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -103,6 +103,57 @@ class Client
     }
 
     /**
+     * Get the token
+     *
+     * @throws InvalidArgumentException
+     * @throws GuzzleException
+     */
+    public function getToken(): Token
+    {
+        if ($this->cacheDriver->has($this->tokenCacheKey)) {
+            return $this->cacheDriver->get($this->tokenCacheKey);
+        }
+
+        if ($this->account->getPostcard()) {
+            $tokenUrl = '/token/v1/autentica/cartaopostagem';
+            $payload = ['numero' => $this->account->getPostcard()];
+        } elseif ($this->account->getContract()) {
+            $tokenUrl = '/token/v1/autentica/contrato';
+            $payload = ['numero' => $this->account->getContract()];
+        } else {
+            $tokenUrl = '/token/v1/autentica';
+            $payload = [];
+        }
+
+        if ($this->account->getDr()) {
+            $payload['dr'] = $this->account->getDr();
+        }
+
+        $response = $this->guzzle->request(
+            'POST',
+            $tokenUrl,
+            [
+                'headers' => [
+                    'Authorization' => 'Basic '.base64_encode(
+                        $this->account->getUsername().':'.$this->account->getPassword()
+                    ),
+                ],
+                'json' => $payload
+            ]
+        );
+
+        $token = Token::create($this->handleResponse($response));
+
+        $this->cacheDriver->set(
+            $this->tokenCacheKey,
+            $token,
+            $token->getExpiraEm()->clone()->subMinutes(10)->timestamp
+        );
+
+        return $token;
+    }
+
+    /**
      * Decode the Response
      *
      * @param ResponseInterface $response
@@ -121,54 +172,8 @@ class Client
         return $this->lastResponse;
     }
 
-    /**
-     * Get the token
-     *
-     * @throws InvalidArgumentException
-     * @throws GuzzleException
-     */
-    public function getToken(): Token
+    public function getAccount(): Account
     {
-        if ($this->cacheDriver->has($this->tokenCacheKey)) {
-            return $this->cacheDriver->get($this->tokenCacheKey);
-        }
-
-        if ($this->authorization->getPostcard()) {
-            $tokenUrl = '/token/v1/autentica/cartaopostagem';
-            $payload = ['numero' => $this->authorization->getPostcard()];
-        } elseif ($this->authorization->getContract()) {
-            $tokenUrl = '/token/v1/autentica/contrato';
-            $payload = ['numero' => $this->authorization->getContract()];
-        } else {
-            $tokenUrl = '/token/v1/autentica';
-            $payload = [];
-        }
-
-        if ($this->authorization->getDr()) {
-            $payload['dr'] = $this->authorization->getDr();
-        }
-
-        $response = $this->guzzle->request(
-            'POST',
-            $tokenUrl,
-            [
-                'headers' => [
-                    'Authorization' => 'Basic '.base64_encode(
-                        $this->authorization->getUsername().':'.$this->authorization->getPassword()
-                    ),
-                ],
-                'json' => $payload
-            ]
-        );
-
-        $token = Token::create($this->handleResponse($response));
-
-        $this->cacheDriver->set(
-            $this->tokenCacheKey,
-            $token,
-            $token->getExpiraEm()->clone()->subMinutes(10)->timestamp
-        );
-
-        return $token;
+        return $this->account;
     }
 }
