@@ -24,11 +24,6 @@ jobs:
           - php-version: '8.2'
           - php-version: '8.3'
           - php-version: '8.4'
-          - php-version: 'nightly'
-            env:
-              COMPOSER_ARGS: '--ignore-platform-reqs'
-      allow-failure:
-        - php-version: 'nightly'
 
     name: PHP ${{ matrix.php-version }} tests
 
