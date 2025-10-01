@@ -15,9 +15,6 @@ jobs:
       matrix:
         include:
           - php-version: '7.4'
-            ANALYSIS: true
-          - php-version: '7.4'
-            COMPOSER_ARGS: '--prefer-lowest'
           - php-version: '8.1'
           - php-version: '8.2'
           - php-version: '8.3'
@@ -49,7 +46,7 @@ jobs:
             composer-${{ runner.os }}-${{ matrix.php-version }}-
 
       - name: Install dependencies
-        run: composer update ${{ matrix.COMPOSER_ARGS || '' }}
+        run: composer update
 
       - name: Run PHPUnit
         run: |
@@ -57,11 +54,12 @@ jobs:
           php vendor/bin/phpunit -c phpunit.xml.dist
 
       - name: Run PHPCS (if ANALYSIS=true)
-        if: ${{ matrix.ANALYSIS == 'true' }}
+        if: ${{ matrix.php-version == '7.4' }}
         run: php vendor/bin/phpcs
 
       - name: Upload coverage to Coveralls (if ANALYSIS=true)
-        if: ${{ matrix.ANALYSIS == 'true' }}
+        if: ${{ matrix.php-version == '7.4' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: php vendor/bin/coveralls --coverage_clover=build/logs/clover.xml -v
+        
