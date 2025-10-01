@@ -27,7 +27,9 @@ Requires PHP 7.4 or newer.
     * [x] **GET** /v2/enderecos/{cep} ``cepHandler()->get()``
     * [ ] ...
 * [x] Pré-Postagem
+    * [x] **GET** /v2/prepostagens ``prePostagemHandler()->query()``
     * [x] **POST** /v1/prepostagens ``prePostagemHandler()->create()``
+    * [x] **DELETE** /v1/prepostagens/objeto/{codigoObjeto} ``prePostagemHandler()->deleteByCode()``
     * [ ] ...
 * [ ] ...
 

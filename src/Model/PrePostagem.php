@@ -14,6 +14,16 @@ abstract class PrePostagem extends CorreiosObject
     public ?string $idCorreios = null;
 
     /**
+     * Dados do remetente.
+     */
+    public ?Remetente $remetente = null;
+
+    /**
+     * Dados do destinatário.
+     */
+    public ?Destinatario $destinatario = null;
+
+    /**
      * Código identificador do objeto. Tamanho máximo: 13 caracteres.
      */
     public ?string $codigoObjeto = null;
@@ -189,6 +199,36 @@ abstract class PrePostagem extends CorreiosObject
     public function setIdCorreios(?string $idCorreios): PrePostagem
     {
         $this->idCorreios = $idCorreios;
+        return $this;
+    }
+
+    public function getRemetente(): ?Remetente
+    {
+        return $this->remetente;
+    }
+
+    /**
+     * @param Remetente|array|null $remetente
+     * @return $this
+     */
+    public function setRemetente($remetente): PrePostagem
+    {
+        $this->remetente = is_null($remetente) ? null : Remetente::create($remetente);
+        return $this;
+    }
+
+    public function getDestinatario(): ?Destinatario
+    {
+        return $this->destinatario;
+    }
+
+    /**
+     * @param Destinatario|array|null $destinatario
+     * @return $this
+     */
+    public function setDestinatario($destinatario): PrePostagem
+    {
+        $this->destinatario = is_null($destinatario) ? null : Destinatario::create($destinatario);
         return $this;
     }
 
@@ -577,6 +617,8 @@ abstract class PrePostagem extends CorreiosObject
     {
         return [
             'idCorreios' => $this->getIdCorreios(),
+            'remetente' => $this->getRemetente() ? $this->getRemetente()->toArray() : null,
+            'destinatario' => $this->getDestinatario() ? $this->getDestinatario()->toArray() : null,
             'codigoServico' => $this->getCodigoServico(),
             'precoServico' => $this->getPrecoServico(),
             'precoPrePostagem' => $this->getPrecoPrePostagem(),

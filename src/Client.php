@@ -35,6 +35,8 @@ class Client
 
     private ?ResponseInterface $lastResponse;
 
+    private ?string $tokenCacheKey = null;
+
     /**
      * @param Account $authorization
      * @param array $guzzleOptions
@@ -44,6 +46,11 @@ class Client
     {
         $this->authorization = $authorization;
         $this->cacheDriver = $cacheDriver;
+        $this->tokenCacheKey = 'cr_correios_tk_'.implode('_', [
+                $this->authorization->getUsername() ?? '',
+                $this->authorization->getContract() ?? '',
+                $this->authorization->getPostcard() ?? '',
+            ]);
 
         $this->guzzle = new Guzzle(array_merge($guzzleOptions, [
             'base_uri' => $this->authorization->isSandbox() ? self::API_SANDBOX_URL : self::API_URL,
@@ -64,15 +71,16 @@ class Client
     public function sendRequest(CorreiosRequest $request)
     {
         try {
-            $token = $this->getToken();
             $payload = $request->getPayload();
+            $query = $request->getQuery();
 
             $this->lastResponse = $this->guzzle->request(
                 $request->getMethod(),
                 $request->getPath(),
                 [
+                    'query' => Util::cleanArray($query),
                     'headers' => [
-                        'Authorization' => 'Bearer '. $token->getToken()
+                        'Authorization' => 'Bearer '. $this->getToken()->getToken()
                     ],
                     'json' => Util::cleanArray($payload)
                 ]
@@ -120,14 +128,8 @@ class Client
      */
     public function getToken(): Token
     {
-        $cacheKey = 'cr_correios_tk_'.implode('_', [
-                $this->authorization->getUsername() ?? '',
-                $this->authorization->getContract() ?? '',
-                $this->authorization->getPostcard() ?? '',
-        ]);
-
-        if ($this->cacheDriver->has($cacheKey)) {
-            return $this->cacheDriver->get($cacheKey);
+        if ($this->cacheDriver->has($this->tokenCacheKey)) {
+            return $this->cacheDriver->get($this->tokenCacheKey);
         }
 
         if ($this->authorization->getPostcard()) {
@@ -160,7 +162,11 @@ class Client
 
         $token = Token::create($this->handleResponse($response));
 
-        $this->cacheDriver->set($cacheKey, $token, $token->getExpiraEm()->clone()->subMinutes(10)->timestamp);
+        $this->cacheDriver->set(
+            $this->tokenCacheKey,
+            $token,
+            $token->getExpiraEm()->clone()->subMinutes(10)->timestamp
+        );
 
         return $token;
     }
