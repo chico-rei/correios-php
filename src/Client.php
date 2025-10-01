@@ -89,9 +89,10 @@ class Client
             return $this->handleResponse($this->lastResponse);
         } catch (ServerException | ClientException $exception) {
             $this->lastResponse = $exception->getResponse();
+            $response = $this->handleResponse($this->lastResponse);
 
             throw new CorreiosAPIException(
-                $exception->getMessage(),
+                $response['msgs'][0] ?? $exception->getMessage(),
                 $exception->getCode(),
                 $exception->getRequest(),
                 $exception->getResponse()
