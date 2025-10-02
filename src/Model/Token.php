@@ -4,6 +4,7 @@ namespace ChicoRei\Packages\Correios\Model;
 
 use Carbon\Carbon;
 use ChicoRei\Packages\Correios\CorreiosObject;
+use ChicoRei\Packages\Correios\Util;
 
 class Token extends CorreiosObject
 {
@@ -204,7 +205,7 @@ class Token extends CorreiosObject
      */
     public function setEmissao($emissao): Token
     {
-        $this->emissao = is_null($emissao) ? null : Carbon::parse($emissao);
+        $this->emissao = Util::parseDate($emissao);
         return $this;
     }
 
@@ -219,7 +220,7 @@ class Token extends CorreiosObject
      */
     public function setExpiraEm($expiraEm): Token
     {
-        $this->expiraEm = is_null($expiraEm) ? null : Carbon::parse($expiraEm);
+        $this->expiraEm = Util::parseDate($expiraEm);
         return $this;
     }
 

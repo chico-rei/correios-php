@@ -3,6 +3,7 @@
 namespace ChicoRei\Packages\Correios\Model;
 
 use Carbon\Carbon;
+use ChicoRei\Packages\Correios\Util;
 use InvalidArgumentException;
 
 class QueryPrePostagem extends PrePostagem
@@ -235,7 +236,7 @@ class QueryPrePostagem extends PrePostagem
      */
     public function setDataEticket($dataEticket): QueryPrePostagem
     {
-        $this->dataEticket = is_null($dataEticket) ? null : Carbon::parse($dataEticket);
+        $this->dataEticket = Util::parseDate($dataEticket);
         return $this;
     }
 
@@ -283,7 +284,7 @@ class QueryPrePostagem extends PrePostagem
      */
     public function setDataHoraStatusAtual($dataHoraStatusAtual): QueryPrePostagem
     {
-        $this->dataHoraStatusAtual = is_null($dataHoraStatusAtual) ? null : Carbon::parse($dataHoraStatusAtual);
+        $this->dataHoraStatusAtual = Util::parseDate($dataHoraStatusAtual);
         return $this;
     }
 
@@ -309,7 +310,7 @@ class QueryPrePostagem extends PrePostagem
      */
     public function setDataHora($dataHora): QueryPrePostagem
     {
-        $this->dataHora = is_null($dataHora) ? null : Carbon::parse($dataHora);
+        $this->dataHora = Util::parseDate($dataHora);
         return $this;
     }
 
@@ -480,7 +481,7 @@ class QueryPrePostagem extends PrePostagem
      */
     public function setDataHoraPreAfericao($dataHoraPreAfericao): QueryPrePostagem
     {
-        $this->dataHoraPreAfericao = is_null($dataHoraPreAfericao) ? null : Carbon::parse($dataHoraPreAfericao);
+        $this->dataHoraPreAfericao = Util::parseDate($dataHoraPreAfericao);
         return $this;
     }
 

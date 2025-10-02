@@ -2,6 +2,8 @@
 
 namespace ChicoRei\Packages\Correios;
 
+use Carbon\Carbon;
+
 class Util
 {
     /**
@@ -29,8 +31,17 @@ class Util
     /**
      * Return equivalent amount in cents
      */
-    public static function amountInCents(?float $amount): int
+    public static function parseDate($dateToParse)
     {
-        return $amount ? intval(number_format($amount, 2, '', '')) : 0;
+        if (is_null($dateToParse)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($dateToParse, 'America/Sao_Paulo');
+        } catch (\Exception $e) {
+            // Try to remove nanoseconds
+            return Carbon::parse(mb_substr($dateToParse, 0, -3), 'America/Sao_Paulo');
+        }
     }
 }

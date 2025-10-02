@@ -4,6 +4,7 @@ namespace ChicoRei\Packages\Correios\Model;
 
 use Carbon\Carbon;
 use ChicoRei\Packages\Correios\CorreiosObject;
+use ChicoRei\Packages\Correios\Util;
 use InvalidArgumentException;
 
 abstract class PrePostagem extends CorreiosObject
@@ -523,7 +524,7 @@ abstract class PrePostagem extends CorreiosObject
      */
     public function setDataPrevistaPostagem($dataPrevistaPostagem): PrePostagem
     {
-        $this->dataPrevistaPostagem = is_null($dataPrevistaPostagem) ? null : Carbon::parse($dataPrevistaPostagem);
+        $this->dataPrevistaPostagem = Util::parseDate($dataPrevistaPostagem);
         return $this;
     }
 
@@ -560,8 +561,7 @@ abstract class PrePostagem extends CorreiosObject
      */
     public function setDataValidadeLogReversa($dataValidadeLogReversa): PrePostagem
     {
-        $this->dataValidadeLogReversa = is_null($dataValidadeLogReversa) ?
-            null : Carbon::parse($dataValidadeLogReversa);
+        $this->dataValidadeLogReversa = Util::parseDate($dataValidadeLogReversa);
         return $this;
     }
 
@@ -576,7 +576,7 @@ abstract class PrePostagem extends CorreiosObject
      */
     public function setPrazoPostagem($prazoPostagem): PrePostagem
     {
-        $this->prazoPostagem = is_null($prazoPostagem) ? null : Carbon::parse($prazoPostagem);
+        $this->prazoPostagem = Util::parseDate($prazoPostagem);
         return $this;
     }
 

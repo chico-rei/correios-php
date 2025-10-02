@@ -4,6 +4,7 @@ namespace ChicoRei\Packages\Correios\Model;
 
 use Carbon\Carbon;
 use ChicoRei\Packages\Correios\CorreiosObject;
+use ChicoRei\Packages\Correios\Util;
 
 class PrePostagemHistoricoStatus extends CorreiosObject
 {
@@ -55,7 +56,7 @@ class PrePostagemHistoricoStatus extends CorreiosObject
      */
     public function setDataHora($dataHora): PrePostagemHistoricoStatus
     {
-        $this->dataHora = is_null($dataHora) ? null : Carbon::parse($dataHora);
+        $this->dataHora = Util::parseDate($dataHora);
         return $this;
     }
 
