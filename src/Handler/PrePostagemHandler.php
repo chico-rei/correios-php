@@ -7,9 +7,11 @@ use ChicoRei\Packages\Correios\Exception\CorreiosAPIException;
 use ChicoRei\Packages\Correios\Exception\CorreiosClientException;
 use ChicoRei\Packages\Correios\Request\CreatePrePostagemRequest;
 use ChicoRei\Packages\Correios\Request\DeletePrePostagemByCodeRequest;
+use ChicoRei\Packages\Correios\Request\GetPrePostagemPostadaRequest;
 use ChicoRei\Packages\Correios\Request\QueryPrePostagemRequest;
 use ChicoRei\Packages\Correios\Response\CreatePrePostagemResponse;
 use ChicoRei\Packages\Correios\Response\DeletePrePostagemByCodeResponse;
+use ChicoRei\Packages\Correios\Response\GetPrePostagemPostadaResponse;
 use ChicoRei\Packages\Correios\Response\QueryPrePostagemResponse;
 use RuntimeException;
 
@@ -100,5 +102,31 @@ class PrePostagemHandler
         $response = $this->client->sendRequest($payload);
 
         return DeletePrePostagemByCodeResponse::create($response);
+    }
+
+    /**
+     * Busca Pré Postagem postada
+     *
+     * @param string|array|GetPrePostagemPostadaRequest $payload
+     * @throws CorreiosAPIException
+     * @throws CorreiosClientException
+     */
+    public function getPosted($payload): GetPrePostagemPostadaResponse
+    {
+        if (is_string($payload)) {
+            $payload = GetPrePostagemPostadaRequest::create(['codigoObjeto' => $payload]);
+        } elseif (is_array($payload)) {
+            $payload = GetPrePostagemPostadaRequest::create($payload);
+        }
+
+        if (!$payload instanceof GetPrePostagemPostadaRequest) {
+            throw new RuntimeException(
+                'Payload must be a string, an array or an instance of GetPrePostagemPostadaRequest'
+            );
+        }
+
+        $response = $this->client->sendRequest($payload);
+
+        return GetPrePostagemPostadaResponse::create($response);
     }
 }
