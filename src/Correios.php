@@ -2,7 +2,7 @@
 
 namespace ChicoRei\Packages\Correios;
 
-use Cache\Adapter\PHPArray\ArrayCachePool;
+use ChicoRei\Packages\Correios\Cache\ArrayCache;
 use ChicoRei\Packages\Correios\Handler\CepHandler;
 use ChicoRei\Packages\Correios\Handler\PrePostagemHandler;
 use Psr\SimpleCache\CacheInterface;
@@ -36,7 +36,7 @@ class Correios
     ) {
         $guzzleOptions = array_merge($this->defaultOptions, $guzzleOptions);
 
-        $this->client = new Client($authorization, $cacheDriver ?? new ArrayCachePool(), $guzzleOptions);
+        $this->client = new Client($authorization, $cacheDriver ?? new ArrayCache(), $guzzleOptions);
     }
 
     public function getClient(): Client
