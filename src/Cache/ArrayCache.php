@@ -8,9 +8,6 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * Minimal in-memory PSR-16 cache used as the default cache driver.
- *
- * Signatures are intentionally untyped to stay compatible with
- * psr/simple-cache ^1.0 on PHP 7.4.
  */
 class ArrayCache implements CacheInterface
 {
@@ -19,7 +16,7 @@ class ArrayCache implements CacheInterface
      */
     private array $store = [];
 
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         if (!$this->has($key)) {
             return $default;
@@ -28,7 +25,7 @@ class ArrayCache implements CacheInterface
         return $this->store[$key]['value'];
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
     {
         $this->store[$key] = [
             'value' => $value,
@@ -38,21 +35,21 @@ class ArrayCache implements CacheInterface
         return true;
     }
 
-    public function delete($key)
+    public function delete(string $key): bool
     {
         unset($this->store[$key]);
 
         return true;
     }
 
-    public function clear()
+    public function clear(): bool
     {
         $this->store = [];
 
         return true;
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $values = [];
 
@@ -63,7 +60,7 @@ class ArrayCache implements CacheInterface
         return $values;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
     {
         foreach ($values as $key => $value) {
             $this->set($key, $value, $ttl);
@@ -72,7 +69,7 @@ class ArrayCache implements CacheInterface
         return true;
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
         foreach ($keys as $key) {
             $this->delete($key);
@@ -81,7 +78,7 @@ class ArrayCache implements CacheInterface
         return true;
     }
 
-    public function has($key)
+    public function has(string $key): bool
     {
         if (!array_key_exists($key, $this->store)) {
             return false;
@@ -98,10 +95,7 @@ class ArrayCache implements CacheInterface
         return true;
     }
 
-    /**
-     * @param int|DateInterval|null $ttl
-     */
-    private function expirationFromTtl($ttl): ?int
+    private function expirationFromTtl(null|int|DateInterval $ttl): ?int
     {
         if ($ttl === null) {
             return null;
@@ -111,6 +105,6 @@ class ArrayCache implements CacheInterface
             return (new DateTimeImmutable())->add($ttl)->getTimestamp();
         }
 
-        return time() + (int) $ttl;
+        return time() + $ttl;
     }
 }
