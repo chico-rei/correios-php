@@ -33,7 +33,7 @@ class Client
 
     private Guzzle $guzzle;
 
-    private ?ResponseInterface $lastResponse;
+    private ?ResponseInterface $lastResponse = null;
 
     private ?string $tokenCacheKey = null;
 

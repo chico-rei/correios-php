@@ -70,4 +70,20 @@ class UtilTest extends TestCase
         $this->assertSame('America/Sao_Paulo', $date->getTimezone()->getName());
         $this->assertSame('2024-12-25 10:30:00', $date->format('Y-m-d H:i:s'));
     }
+
+    /**
+     * When the first Carbon::parse() throws, the catch block retries after
+     * stripping the last 3 characters (the "remove nanoseconds" fallback).
+     */
+    public function testParseDateFallsBackByStrippingTrailingCharacters()
+    {
+        // The comma decimal separator makes the first parse throw; dropping
+        // the trailing ",12" leaves a parseable "2024-12-25T10:30:00,".
+        $date = Util::parseDate('2024-12-25T10:30:00,123');
+
+        $this->assertInstanceOf(Carbon::class, $date);
+        $this->assertTrue(
+            Carbon::parse('2024-12-25T10:30:00', 'America/Sao_Paulo')->equalTo($date)
+        );
+    }
 }
