@@ -14,11 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: '7.4'
-          - php-version: '8.1'
           - php-version: '8.2'
           - php-version: '8.3'
           - php-version: '8.4'
+          - php-version: '8.5'
 
     name: PHP ${{ matrix.php-version }} tests
 
@@ -54,11 +53,11 @@ jobs:
           php vendor/bin/phpunit -c phpunit.xml.dist
 
       - name: Run PHPCS (if ANALYSIS=true)
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.2' }}
         run: php vendor/bin/phpcs
 
       - name: Upload coverage to Coveralls (if ANALYSIS=true)
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.2' }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: php vendor/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v

@@ -15,7 +15,7 @@ Via [Composer](https://getcomposer.org/)
 $ composer require chico-rei/correios-php "dev-master"
 ```
 
-Requires PHP 8.0 or newer.
+Requires PHP 8.2 or newer.
 
 ## Features
 

@@ -30,9 +30,9 @@ class Correios
      * @param array $guzzleOptions Guzzle options except http_errors and headers
      */
     public function __construct(
-        Account        $authorization,
-        CacheInterface $cacheDriver = null,
-        array          $guzzleOptions = []
+        Account         $authorization,
+        ?CacheInterface $cacheDriver = null,
+        array           $guzzleOptions = []
     ) {
         $guzzleOptions = array_merge($this->defaultOptions, $guzzleOptions);
 
